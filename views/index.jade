@@ -1,13 +1,14 @@
 extends layout
 
 block content
-  div#homepage
-    h1 #{title}
-    p Search barcode
-    form
-      input(name='barcode' type='text' placeholder='barcode' min='1' max='7891' id="searchquery" required)
-      input(type="submit" value="Show" name='clickSearch' id="clickSearch")
+   div#homepage
+     h1 #{title}
+     p Search barcode
+     form
+       input(name='barcode' type='text' placeholder='barcode' min='1' max='7891' id="searchquery" required)
+       input(type="submit" value="Show" name='clickSearch' id="clickSearch")
 
-  div#resultpage
-    h1 Results
-    ul#results
+   div#resultpage
+     //- p or search specific product: form, so skip top part
+     h1 Results
+     ul#results
