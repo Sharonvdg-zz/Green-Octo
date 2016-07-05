@@ -2,6 +2,8 @@ $( document ).ready(function() {
 	console.log( "ready!" );
 
 	var APIbarcode = "http://pod.opendatasoft.com/api/records/1.0/search/?dataset=pod_gtin&q=" + $("#searchquery").val() + "&facet=gpc_s_nm&facet=brand_nm&facet=owner_nm&facet=gln_nm&facet=prefix_nm&refine.prefix_nm=GS1+Netherlands&refine.gpc_s_nm=Food+-+Beverage+-+Tobacco"
+	var APIproductNumber = "https://api.nal.usda.gov/ndb/search/?format=json&q=" + productName + "&max=1&offset=0&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
+	var APIproductDetails = "https://api.nal.usda.gov/ndb/reports/?ndbno=" + productNumber + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
 
 	var productName;
 	var productNumber;
@@ -13,6 +15,7 @@ $( document ).ready(function() {
 
 	$( '#clickSearch' ).click(function(event) {
 		event.preventDefault()
+
 		$.get( APIbarcode, function( barcodedata ) {
 			console.log($("#searchquery").val())
 			//for loop, if gtin_nm consists, then take that result and return.
@@ -28,8 +31,11 @@ $( document ).ready(function() {
 			$( '#homepage' ).hide()
 			$( '#resultpage' ).show()
 			console.log('now the new api is coming ' + productName)
-			var APIproductNumber = "https://api.nal.usda.gov/ndb/search/?format=json&q=" + productName + "&max=1&offset=0&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
-
+			
+			//Turns out that the barcode API doesn't give back solid productnames, but random names which are sometimes really long sentences. 
+			//These sentences can not be understood by the next API, which can in his turn search for nutritions in the food. 
+			//This nutrition API needs a food, not a brand, to search for nutritions. 
+			
 			$.get( APIproductNumber, function( numberdata ) {
 				//first find the specific product number through API
 				console.log('productNumber name ' + numberdata.list.item[0].name)
@@ -37,7 +43,6 @@ $( document ).ready(function() {
 				productNameNutr = numberdata.list.item[0].name
 				$("#results").append('<li><h4>productNameNutr  ' + productNameNutr + '</h4></li>')
 
-				var APIproductDetails = "https://api.nal.usda.gov/ndb/reports/?ndbno=" + productNumber + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
 
 				$.get( APIproductDetails, function( productdata ) {
 					//then fill in that number and get product details.
@@ -52,7 +57,7 @@ $( document ).ready(function() {
 
 			})
 
-});
+		});
 
 })
 });
