@@ -3,9 +3,9 @@ extends layout
 block content
    div#homepage
      h1 #{title}
-     p Search barcode
+     p Fill in amount of burned calories
      form
-       input(name='barcode' type='text' placeholder='barcode' min='1' max='7891' id="searchquery" required)
+       input(name='burnedCal' type='text' placeholder='burned calories' min='1' max='7891' id="searchquery" required)
        input(type="submit" value="Show" name='clickSearch' id="clickSearch")
 
    div#resultpage
