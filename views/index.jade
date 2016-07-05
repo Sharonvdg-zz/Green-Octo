@@ -1,8 +1,13 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  form(action='/show' method='post')
-    input(name='barcode' type='number' placeholder='barcode' min='1' max='7891' required)
-    input(type="submit" value="Show")
+  div#homepage
+    h1 #{title}
+    p Search barcode
+    form
+      input(name='barcode' type='text' placeholder='barcode' min='1' max='7891' id="searchquery" required)
+      input(type="submit" value="Show" name='clickSearch' id="clickSearch")
+
+  div#resultpage
+    h1 Results
+    ul#results

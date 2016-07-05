@@ -4,12 +4,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-sass = require('node-sass');
+var sass = require('node-sass');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 // var results = require('./routes/results')
-var db = require('./modules/database')
+// var db = require('./modules/database')
 
 var app = express();
 
@@ -72,4 +72,4 @@ app.use(function(err, req, res, next) {
 
 
 // module.exports = app;
-app.listen(7000)
+app.listen(3000)
