@@ -3,69 +3,93 @@ $( document ).ready(function() {
 	$( '#homepage' ).show()
 	$( '#resultpage' ).hide()
 
-	var APIallFood = "https://api.nal.usda.gov/ndb/list?lt=f&max=500&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
-	function APItheFood (randomNr) {
-		return "https://api.nal.usda.gov/ndb/list?lt=f&max=1&offset=" + randomNr + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
+	//var APIallFood = "https://api.nal.usda.gov/ndb/list?lt=f&max=500&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
+	// function APItheFood (randomNr) {
+	// 	return "https://api.nal.usda.gov/ndb/list?lt=f&max=1&offset=" + randomNr + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
+	// }
+	// function APIcalFood (foodId) { 
+	// 	return "https://api.nal.usda.gov/ndb/reports/?ndbno=" + foodId + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
+	// }
+
+	function APItheFood (randomFood) {
+		return "https://api.nal.usda.gov/ndb/nutrients/?format=json&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3&nutrients=208&ndbno=" + randomFood 
 	}
-	function APIcalFood (foodId) { 
-		return "https://api.nal.usda.gov/ndb/reports/?ndbno=" + foodId + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
+
+	var thearray = [ ['09500', '09501', '09502', '09503', '09504', '09040', '19902', '19903', '19904', '19410'], 
+	['19155', '21118', '21237', '21309', '21233'] ]
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
+	randomArr = getRandomInt(0, 1)
+	console.log('randomArr ' + randomArr)
+
 
 	$( '#clickSearch' ).click(function(event) {
 		event.preventDefault()
 		$( '#homepage' ).hide()
 		$( '#resultpage' ).show()
 
-		// First get list of foods
-		$.get( APIallFood, function( allFood ) {
-			
-			// Second, choose random food item 
-			function getRandomInt(min, max) {
-				return Math.floor(Math.random() * (max - min + 1)) + min;
-			}
-			var max = allFood.list.item.length
-			rand = getRandomInt(0, max)
-			console.log('Random nr: ' + rand)
+		// How much kcal did you burn?
+		var burnedCalories = $("#searchquery").val()
+		$("#results").append('<h1>You burned ' + burnedCalories + ' kcal! </h1>')
 
-			// Get the specific food and its id or ndbno
-			var APItheFoodLink = APItheFood(rand)
-			$.get( APItheFoodLink, function( theFood ) {
-				var foodId = theFood.list.item[0].id 
-				var foodName = theFood.list.item[0].name
+		for( var i=0; i < thearray[randomArr].length; i++ ) {
+			var maxFood = (thearray[randomArr].length -1)
+			var nrFood = getRandomInt(0, maxFood)
+			var randomFood = thearray[randomArr][nrFood]
+			console.log('randomFood ' + randomFood)
 
-				// Third, find amount of calories of the chosen food
-				var APIcalFoodLink = APIcalFood(foodId)
-				$.get( APIcalFoodLink, function( nutrFood ) {
+			// Get the specific food and its value
+			var APItheFoodLink = APItheFood(randomFood)
 
-					var burnedCal = function() {
-						return $("#searchquery").val() / 1000
-					}
-					var burnedCalories = burnedCal()
-					$("#results").append('<h1> Burned: ' + burnedCalories + ' kcal </h1>')
-
-					for( var i=0; i<nutrFood.report.food.nutrients.length; i++ ) {
-						if( nutrFood.report.food.nutrients[i].nutrient_id == 208 ) {
-							var amountCal = nutrFood.report.food.nutrients[i].value;
-							console.log('random food amount calories ' + amountCal + nutrFood.report.food.nutrients[i].unit)
-							console.log('burned amount calories ' + burnedCalories)
-							i = nutrFood.report.food.nutrients.length ++;
-						}
-					}
-
-					// Fourth, compare the filled in calories with the calories of chosen food - divide by and come up with an amount of pieces of food.
-					// 		Example: "You burned 4 apples with your workout."
+			// if it's per 100 gram
+			if( randomArr == 0 ) {
+				$.get( APItheFoodLink, function( theFood ) {
+					console.log(theFood)
+					var foodName = theFood.report.foods[0].name 
+					var foodValue = theFood.report.foods[0].nutrients[0].gm
 
 					function calculateAmount(burnedCal, amountCal) {
-						var number = (burnedCalories / amountCal);
+						var number = (burnedCal / amountCal);
 						console.log(number)
-						return (Math.round( number * 10 ) / 10);
+						return (Math.round( number * 100 ));
 					}
-					//Still to add: the amount of kcal food is calculated per 100 gram, translate to total!!
-					var amountFood = calculateAmount(burnedCal, amountCal) 
+
+					var amountFood = calculateAmount(burnedCalories, foodValue) 
 					console.log('amountFood ' + amountFood)
-					$("#results").append('<p> You burned ' + amountFood + ' ' + foodName + ' </p>')
+					$("#results").append('<p>You can now eat another ' + amountFood + ' gram of ' + foodName + ' </p>')
 				})
-			})
-}) 
-})
+				i = thearray[randomArr].length ++
+			}
+
+			// if it's per piece (Chicken macNuggets: 21309 (4 pieces))
+			if( randomArr == 1 ) {
+				$.get( APItheFoodLink, function( theFood ) {
+					var foodName = theFood.report.foods[0].name 
+					var foodValue = theFood.report.foods[0].nutrients[0].value
+
+					function calculatePieces(burnedCal, amountCal) {
+						var number = (burnedCal / amountCal);
+						console.log(number)
+						return (Math.round( number * 100 ) / 100);
+					}
+
+					if( theFood.report.foods[0].ndbno == 21309 ) { 
+						//if it's macNuggets, multiply by 4
+						console.log('piecesFood ' + piecesFood)
+						var piecesFood = 4 * calculatePieces(burnedCalories, foodValue) 
+						console.log('piecesFood ' + piecesFood)
+						$("#results").append('<p>Now you can eat ' + piecesFood + ' more ' + foodName + ' </p>')	
+					} 
+					else { // just do your thing!
+						var piecesFood = calculatePieces(burnedCalories, foodValue) 
+						console.log('piecesFood ' + piecesFood)
+						$("#results").append('<p>Now you can eat ' + piecesFood + ' more ' + foodName + ' </p>')	
+					}			
+				})
+				i = thearray[randomArr].length ++
+			}
+
+		}
+	})
 })
