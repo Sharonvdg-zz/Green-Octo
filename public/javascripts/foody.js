@@ -1,16 +1,6 @@
-$( document ).ready(function() {
-	console.log( "ready!" );
-	$( '#homepage' ).show()
-	$( '#resultpage' ).hide()
+//UNFORTUNATELY REFRESH DOESN'T WORK YET..
 
-	//var APIallFood = "https://api.nal.usda.gov/ndb/list?lt=f&max=500&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
-	// function APItheFood (randomNr) {
-	// 	return "https://api.nal.usda.gov/ndb/list?lt=f&max=1&offset=" + randomNr + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
-	// }
-	// function APIcalFood (foodId) { 
-	// 	return "https://api.nal.usda.gov/ndb/reports/?ndbno=" + foodId + "&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3"
-	// }
-
+function doCalculation(elementid) {
 	function APItheFood (randomFood) {
 		return "https://api.nal.usda.gov/ndb/nutrients/?format=json&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3&nutrients=208&ndbno=" + randomFood 
 	}
@@ -22,15 +12,11 @@ $( document ).ready(function() {
 	}
 	randomArr = getRandomInt(0, 1)
 	console.log('randomArr ' + randomArr)
-
-
-	$( '#clickSearch' ).click(function(event) {
-		event.preventDefault()
-		$( '#homepage' ).hide()
-		$( '#resultpage' ).show()
+	$( '#homepage' ).hide()
+	$( '#resultpage' ).show()
 
 		// How much kcal did you burn?
-		var burnedCalories = $("#searchquery").val()
+		var burnedCalories = $(elementid).val()
 		$("#results").append('<h1>You burned ' + burnedCalories + ' kcal! </h1>')
 
 		for( var i=0; i < thearray[randomArr].length; i++ ) {
@@ -91,5 +77,27 @@ $( document ).ready(function() {
 			}
 
 		}
+
+}
+$( document ).ready(function() {
+	console.log( "ready!" );
+	$( '#homepage' ).show()
+	$( '#resultpage' ).hide()
+
+	$("#refreshSearch").click(function(event){
+		event.preventDefault()
+		$("#results").text('')
+		doCalculation('#searchquery') 
+	})
+
+	$( '#clickSearch' ).click(function(event) {
+		event.preventDefault()
+		doCalculation('#searchquery')
+	})
+	
+	$( '#clickSearch2' ).click(function(event) {
+		event.preventDefault()
+		$("#results").text('')
+		doCalculation('#searchquery2')
 	})
 })

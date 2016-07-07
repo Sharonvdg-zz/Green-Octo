@@ -6,16 +6,17 @@ block content
      p Fill in amount of burned kcal
      form
        input(name='burnedCal' type='text' placeholder='burned kcal' min='1' max='7891' id="searchquery" required)
-       input(type="submit" value="Show" name='clickSearch' id="clickSearch")
+       input(type="submit" value="Show me!" name='clickSearch' id="clickSearch")
 
    div#resultpage
      h1#amountCal
      p#results
      br
-     //- input(type="submit" value="Refresh!" id="clickSearch") 
-     //- br
-     //- br
-     //- p Or did you burn another amount?
-     //- form
-     //-   input(name='burnedCal' type='text' placeholder='burned kcal' min='1' max='7891' id="searchquery" required)
-     //-   input(type="submit" value="Show" name='clickSearch' id="clickSearch")
+     form
+      input(type="submit" value="Refresh!" id="refreshSearch") 
+     br
+     br
+     p Or did you burn another amount?
+     form
+       input(name='burnedCal' type='text' placeholder='burned kcal' min='1' max='7891' id="searchquery2" required)
+       input(type="submit" value="Again!" name='clickSearch' id="clickSearch2")
