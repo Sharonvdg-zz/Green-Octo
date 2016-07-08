@@ -17,13 +17,13 @@ function doCalculation(elementid) {
 
 		// How much kcal did you burn?
 		var burnedCalories = $(elementid).val()
-		$("#results").append('<h1>You burned ' + burnedCalories + ' kcal! </h1>')
+		$("#resultsh1").html('You burned ' + burnedCalories + ' kcal!')
 
 		for( var i=0; i < thearray[randomArr].length; i++ ) {
 			var maxFood = (thearray[randomArr].length -1)
 			var nrFood = getRandomInt(0, maxFood)
 			var randomFood = thearray[randomArr][nrFood]
-			console.log('randomFood ' + randomFood)
+			console.log('for loop: randomFood ' + randomFood)
 
 			// Get the specific food and its value
 			var APItheFoodLink = APItheFood(randomFood)
@@ -34,43 +34,43 @@ function doCalculation(elementid) {
 					console.log(theFood)
 					var foodName = theFood.report.foods[0].name 
 					var foodValue = theFood.report.foods[0].nutrients[0].gm
+					console.log('if randomArr = 0; foodValue ' + foodValue)
 
 					function calculateAmount(burnedCal, amountCal) {
 						var number = (burnedCal / amountCal);
-						console.log(number)
-						return (Math.round( number * 100 ));
+						console.log('number ' + number * 100)
+						return (Math.round( number * 10000 ) / 100);
 					}
 
 					var amountFood = calculateAmount(burnedCalories, foodValue) 
 					console.log('amountFood ' + amountFood)
-					$("#results").append('<p>You can now eat another ' + amountFood + ' gram of ' + foodName + ' </p>')
+					$("#results").html('<p>You can now eat another ' + amountFood + ' gram of ' + foodName + ' </p>')
 				})
 				i = thearray[randomArr].length ++
 			}
 
 			// if it's per piece (Chicken macNuggets: 21309 (4 pieces))
-			if( randomArr == 1 ) {
+			else if( randomArr == 1 ) {
 				$.get( APItheFoodLink, function( theFood ) {
 					var foodName = theFood.report.foods[0].name 
 					var foodValue = theFood.report.foods[0].nutrients[0].value
 
 					function calculatePieces(burnedCal, amountCal) {
 						var number = (burnedCal / amountCal);
-						console.log(number)
+						console.log('number ' + number *100)
 						return (Math.round( number * 100 ) / 100);
 					}
 
 					if( theFood.report.foods[0].ndbno == 21309 ) { 
 						//if it's macNuggets, multiply by 4
-						console.log('piecesFood ' + piecesFood)
-						var piecesFood = 4 * calculatePieces(burnedCalories, foodValue) 
-						console.log('piecesFood ' + piecesFood)
-						$("#results").append('<p>Now you can eat ' + piecesFood + ' more ' + foodName + ' </p>')	
+						var piecesNugg = 4 * calculatePieces(burnedCalories, foodValue) 
+						console.log('piecesNugg nuggets ' + piecesNugg)
+						$("#results").html('<p>Now you can eat ' + piecesNugg + ' more ' + foodName + ' </p>')	
 					} 
 					else { // just do your thing!
 						var piecesFood = calculatePieces(burnedCalories, foodValue) 
-						console.log('piecesFood ' + piecesFood)
-						$("#results").append('<p>Now you can eat ' + piecesFood + ' more ' + foodName + ' </p>')	
+						console.log('piecesFood other ' + piecesFood)
+						$("#results").html('<p>You can now eat ' + piecesFood + ' more ' + foodName + ' </p>')	
 					}			
 				})
 				i = thearray[randomArr].length ++
@@ -79,6 +79,7 @@ function doCalculation(elementid) {
 		}
 
 }
+
 $( document ).ready(function() {
 	console.log( "ready!" );
 	$( '#homepage' ).show()
@@ -86,8 +87,13 @@ $( document ).ready(function() {
 
 	$("#refreshSearch").click(function(event){
 		event.preventDefault()
-		$("#results").text('')
-		doCalculation('#searchquery') 
+		if ( $('#searchquery2').val().length > 1 ) {
+			// $("#results").text('')
+			doCalculation('#searchquery2') 
+		} else  {
+			// $("#results").text('')
+			doCalculation('#searchquery') 
+		}
 	})
 
 	$( '#clickSearch' ).click(function(event) {
