@@ -1,5 +1,3 @@
-//UNFORTUNATELY REFRESH DOESN'T WORK YET..
-
 function doCalculation(elementid) {
 	function APItheFood (randomFood) {
 		return "https://api.nal.usda.gov/ndb/nutrients/?format=json&api_key=FFB7WsiNR7bR4HtRIWnDOtf80CocjsLMTnG12Yn3&nutrients=208&ndbno=" + randomFood 
